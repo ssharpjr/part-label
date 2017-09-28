@@ -3,15 +3,13 @@
 # vim: autoindent shiftwidth=4 expandtab textwidth=80 tabstop=4 softtabstop=4
 ###############################################################################
 
-# Imports
-import os
+# IMPORTS
 import sys
 from subprocess import check_output, STDOUT
 
-from time import time, strftime, sleep
 from datetime import datetime
 
-# import RPi.GPIO as io
+import RPi.GPIO as io
 
 from iqapi_test import press_api_request
 
@@ -19,6 +17,7 @@ from iqapi_test import press_api_request
 
 
 # VARIABLES
+DEBUG = 1
 label_printer_name = "zplprinter"
 
 
@@ -84,26 +83,48 @@ def get_day_of_year():
     return day_of_year
 
 
+def build_label_file():
+    pass
+
+
+def print_label():
+    pass
+
+
 ###############################################################################
 # Main
 
 def main():
-    # TODO: Set Press ID
+    # Startup checks and sets
+    # COMPLETE: Set Press ID
     PRESS_ID = get_press_id()
-    print(PRESS_ID)
 
     # TODO: Set Printer
     # label_printer = set_printer()
 
-    # TODO: Wait for PLC trigger (button)
+    while True:
+        try:
+            # TODO: Wait for PLC trigger (button)
+            if DEBUG:
+                print("Waiting for PLC")
+            io.wait_for_edge(btn_pin, io.BOTH, bouncetime=200)
+            if DEBUG:
+                print("PLC trigger detected")
 
-    # TODO: Get Part Number from IQ API
-    part_number = set_part_number(PRESS_ID)
-    print(part_number)
+            # TODO: Get Part Number from IQ API
+            part_number = set_part_number(PRESS_ID)
+            if DEBUG:
+                print("Part Number: " + str(part_number))
 
-    # TODO: Build label file
+            # TODO: Build label file
+            label_file = build_label_file()
 
-    # TODO: Print label
+            # TODO: Print label
+            print_label()
+
+        except KeyboardInterrupt:
+            io.cleanup()
+            exit_program()
 
 
 ###############################################################################
