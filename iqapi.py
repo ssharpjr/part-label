@@ -41,6 +41,24 @@ def press_api_request(press_id):
         print(data)
 
 
+def press_api_request_pn_only(press_id):
+    url = api_url + '/press/' + press_id
+    resp = requests.get(url=url, timeout=10)
+    data = json.loads(resp.text)
+
+    try:
+        press_id = data['press']
+        wo_id = data['wo_id']
+        itemno = data['itemno']
+        descrip = data['descrip']
+        itemno_mat = data['itemno_mat']
+        descrip_mat = data['descrip_mat']
+        return itemno
+    except:
+        print("\nAPI Data is incomplete")
+        print(data)
+
+
 def wo_api_request(wo_id):
     url = api_url + '/wo/' + wo_id
     resp = requests.get(url=url, timeout=10)

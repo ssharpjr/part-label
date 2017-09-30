@@ -2,18 +2,17 @@
 # -*- coding: utf-8 -*-
 # vim: autoindent shiftwidth=4 expandtab textwidth=80 tabstop=4 softtabstop=4
 
-from datetime import datetime
+import os
+import sys
+from subprocess import check_output, STDOUT
+
+# import RPi.GPIO as io
 
 
 def exit_program():
     print("\nExiting")
     io.cleanup()
     sys.exit()
-
-
-def get_day_of_year():
-    day_of_year = datetime.now().timetuple().tm_yday
-    return day_of_year
 
 
 def get_press_id():
@@ -36,14 +35,18 @@ def get_press_id():
         sys.exit()
 
 
-def setPrinter():
-    label_printer = check_output("lpstat -p | grep zplprinter; exit 0",
+def set_printer():
+    label_printer_name = "zplprinter"
+    label_printer = check_output("lpstat -p | grep " + label_printer_name + "; exit 0",
                                  stderr=STDOUT, shell=True)
     if not len(label_printer) > 0:
         print("Label printer not detected! \n Exiting")
+        # Cannot print labels without a label printer.
         exit_program()
 
 
-
-
-
+def send_image_file_to_printer(label_printer):
+    image_file = "cc/images/CC_120.GRF"
+    print_cmd = "lpr -P " + label_printer + " -l " + image_file
+    # os.system(print_cmd)
+    print(print_cmd)

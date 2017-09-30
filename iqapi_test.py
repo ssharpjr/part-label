@@ -4,7 +4,8 @@
 
 # Place holder data for testing API apps.
 
-def press_api_request(press_id):
+
+def press_api_request_pn_only(press_id):
     # Return placeholder data
     press_id = "176"
     wo_id = "1234567890"
