@@ -5,6 +5,7 @@
 
 # IMPORTS
 import os
+from datetime import datetime
 
 # import RPi.GPIO as io
 
@@ -20,6 +21,7 @@ DEBUG = 1
 
 label_template_file_name = "label_template.zpl"
 label_file = "/tmp/label_file.zpl"
+sn_log_file = "log/serial_numbers.log"
 
 ###############################################################################
 # SETUP Raspberry Pi
@@ -50,6 +52,14 @@ def build_label(pn, sn):
     with open(label_file, 'w') as f:
         f.write(label)
         f.truncate()
+
+
+def log_serial_number(part_number, serial_number):
+    # Log serial numbers in a CSV file.
+    now = datetime.now().strftime("%Y%m%d%H%M%S")
+    log_entry = now + "," + part_number + "," + serial_number + "\n"
+    with open(sn_log_file, 'a') as f:
+        f.write(log_entry)
 
 
 def print_label(label_printer):
@@ -103,6 +113,9 @@ def main():
             # TODO: Need to test printing from RPI
             print_label(label_printer)
 
+            # COMPLETE: Log printed Serial Number
+            log_serial_number(part_number, serial_number)
+
             # COMPLETE: Increment Serial Number
             increment_sn()
 
@@ -140,6 +153,9 @@ def test_run():
 
     # Print label
     print_label(label_printer)
+
+    # Log printed Serial Number
+    log_serial_number(part_number, serial_number)
 
     # Increment Serial Number
     increment_sn()
