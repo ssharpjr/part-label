@@ -96,6 +96,7 @@ def main():
         try:
             # TODO: Wait for PLC trigger (button)
             # TODO: Need to test with RPI
+            # TODO: ERROR: The button release triggers a label!
             sleep(1)  # Add small delay before reading button
             btn_state = io.input(btn_pin)
             if btn_state == 1:  # Button is pushed
@@ -183,4 +184,4 @@ def test_run():
 
 
 if __name__ == '__main__':
-    test_run()
+    main()
