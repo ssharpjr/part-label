@@ -2,17 +2,8 @@
 # -*- coding: utf-8 -*-
 # vim: autoindent shiftwidth=4 expandtab textwidth=80 tabstop=4 softtabstop=4
 
-import os
 import sys
 from subprocess import check_output, STDOUT
-
-# import RPi.GPIO as io
-
-
-def exit_program():
-    print("\nExiting")
-    io.cleanup()
-    sys.exit()
 
 
 def get_press_id():

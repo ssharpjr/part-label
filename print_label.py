@@ -5,13 +5,13 @@
 
 # IMPORTS
 import os
+import sys
 from datetime import datetime
 from time import sleep
+from subprocess import check_output, STDOUT
 
 import RPi.GPIO as io
 
-from functions import get_press_id, set_printer, exit_program,\
-                      send_image_file_to_printer
 from iqapi_test import press_api_request_pn_only
 from serialnumber import get_full_serial_number, increment_sn, print_sn_file
 
@@ -40,6 +40,49 @@ io.setmode(io.BCM)
 # When the button is pushed, btn_pin RISES HIGH to 3V3 (becomes True).
 io.setup(btn_pin, io.IN, pull_up_down=io.PUD_DOWN)
 ###############################################################################
+
+
+def exit_program():
+    print("\nExiting")
+    io.cleanup()
+    sys.exit()
+
+
+def get_press_id():
+    # Get PRESS_ID from /boot/PRESS_ID file
+    # Close the program if no PRESS_ID is found
+    press_id_file = "/boot/PRESS_ID"
+    try:
+        with open(press_id_file) as f:
+            PRESS_ID = f.read().replace('\n', '')
+            if len(PRESS_ID) >= 3:
+                return PRESS_ID
+            else:
+                raise ValueError("PRESS_ID is Not Assigned!\nExiting")
+                sys.exit()
+    except IOError:
+        print(press_id_file + " Not Found!\nExiting")
+        sys.exit()
+    except BaseException as e:
+        print(e)
+        sys.exit()
+
+
+def set_printer():
+    label_printer_name = "zplprinter"
+    label_printer = check_output("lpstat -p | grep " + label_printer_name + "; exit 0",
+                                 stderr=STDOUT, shell=True)
+    if not len(label_printer) > 0:
+        print("Label printer not detected! \n Exiting")
+        # Cannot print labels without a label printer.
+        exit_program()
+
+
+def send_image_file_to_printer(label_printer):
+    image_file = "cc/images/CC_120.GRF"
+    print_cmd = "lpr -P " + label_printer + " -l " + image_file
+    # os.system(print_cmd)
+    print(print_cmd)
 
 
 def set_part_number(press_id):
@@ -96,40 +139,25 @@ def main():
         try:
             # TODO: Wait for PLC trigger (button)
             # TODO: Need to test with RPI
-            # TODO: ERROR: The button release triggers a label!
-            sleep(1)  # Add small delay before reading button
-            btn_state = io.input(btn_pin)
-            if btn_state == 1:  # Button is pushed
-                # Halt the program until button is released
-                if DEBUG:
-                    print("Waiting for button release.")
-                # Wait for FALLING edge (pin moving from 3V3 to 0V)
-                io.wait_for_edge(btn_pin, io.FALLING, bouncetime=300)
-                if DEBUG:
-                    print("Button released, continuing...")
-            if btn_state == 0:  # Button is not pushed
-                # Halt the program until button is pressed
-                if DEBUG:
-                    print("Waiting for button press.")
-                # Wait for RISING edge (pin moving from 0V to 3V3)
-                io.wait_for_edge(btn_pin, io.RISING, bouncetime=300)
-                if DEBUG:
-                    print("Button pressed, continuing...")
+            # Wait for RISING edge (pin RISING from 0V to 3V3)
+            io.wait_for_edge(btn_pin, io.RISING, bouncetime=300)
+            if DEBUG:
+                print("Button pressed, continuing...")
 
-            # COMPLETE: Get Part Number from IQ API
+            # Get Part Number from IQ API
             part_number = set_part_number(press_id)
             if DEBUG:
                 print("Part Number: " + str(part_number))
 
-            # COMPLETE: Generate Serial Number
+            # Generate Serial Number
             serial_number = get_full_serial_number()
             if DEBUG:
                 print("Serial Number: " + serial_number)
 
-            # COMPLETE: Build label file
+            # Build label file
             build_label(part_number, serial_number)
 
-            # COMPLETE: Print label
+            # Print label
             # TODO: Need to test printing from RPI
             print_label(label_printer)
 
@@ -138,6 +166,9 @@ def main():
 
             # COMPLETE: Increment Serial Number
             increment_sn()
+
+            # Pause before next run
+            sleep(1)
 
         except KeyboardInterrupt:
             io.cleanup()
