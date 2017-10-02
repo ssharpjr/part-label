@@ -140,9 +140,15 @@ def main():
             # TODO: Wait for PLC trigger (button)
             # TODO: Need to test with RPI
             # Wait for RISING edge (pin RISING from 0V to 3V3)
-            io.wait_for_edge(btn_pin, io.RISING, bouncetime=300)
             if DEBUG:
-                print("Button pressed, continuing...")
+                print("Waiting on PLC trigger...")
+            try:
+                io.wait_for_edge(btn_pin, io.RISING, bouncetime=300)
+                if DEBUG:
+                    print("Button pressed, continuing...")
+            except KeyboardInterrupt:
+                # Only works if a keyboard CTRL-C is pressed.
+                exit_program()
 
             # Get Part Number from IQ API
             part_number = set_part_number(press_id)
