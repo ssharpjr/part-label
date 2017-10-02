@@ -55,8 +55,8 @@ def read_date_file():
             saved_date = f.read().replace('\n', '')
             return saved_date
     except IOError:
-        print(date_file + " Not Found.\nCreating it.")
-        write_date_file()
+        print(date_file + " Not Found.\nExiting.")
+        sys.exit()
     except BaseException as e:
         print(e)
         sys.exit()
@@ -90,10 +90,8 @@ def read_sn_file():
         sn = str(sn)
         return sn
     except IOError:
-        print(sn_file + " Not Found.\nCreating it.")
-        # If sn_file is missing, reset sn and create file.
-        sn = reset_sn()
-        write_sn_file(sn)
+        print(sn_file + " Not Found.\nExiting.")
+        sys.exit()
     except BaseException as e:
         print(e)
         sys.exit()

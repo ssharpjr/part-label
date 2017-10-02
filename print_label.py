@@ -86,19 +86,20 @@ def send_image_file_to_printer(label_printer):
     # print(print_cmd)
 
 
-def set_part_number(press_id):
+def set_part_number(press_id, pad=False):
     # Get Part Number from IQ API
     itemno = press_api_request_pn_only(press_id)
     # Must be 15-digits.  Pad with zeros as needed.
     itemno = str(itemno)
-    itemno = itemno.rjust(15, '0')
+    if pad:
+        itemno = itemno.rjust(15, '0')
     return itemno
 
 
-def build_label(pn, sn):
+def build_label(pn, padpn, sn):
     with open(label_template_file_name, 'r') as f:
         label_data = f.read()
-    label = label_data.format(pn=pn, sn=sn)
+    label = label_data.format(pn=pn, padpn=padpn, sn=sn)
 
     with open(label_file, 'w') as f:
         f.write(label)
@@ -115,10 +116,11 @@ def log_serial_number(part_number, serial_number):
 
 def print_label(label_printer):
     print_cmd = "lpr -P " + label_printer + " -l " + label_file
-    # os.system(print_cmd)
-    print(print_cmd)
-    cmd = "cat " + label_file
-    os.system(cmd)
+    os.system(print_cmd)
+    if DEBUG:
+        print(print_cmd)
+    # cmd = "cat " + label_file
+    # os.system(cmd)
 
 
 ###############################################################################
@@ -153,8 +155,10 @@ def main():
 
             # Get Part Number from IQ API
             part_number = set_part_number(press_id)
+            part_number_padded = set_part_number(press_id, True)
             if DEBUG:
                 print("Part Number: " + str(part_number))
+                print("Part Number (padded) " + part_number_padded)
 
             # Generate Serial Number
             serial_number = get_full_serial_number()
@@ -162,7 +166,7 @@ def main():
                 print("Serial Number: " + serial_number)
 
             # Build label file
-            build_label(part_number, serial_number)
+            build_label(part_number, part_number_padded, serial_number)
 
             # Print label
             # TODO: Need to test printing from RPI
@@ -198,8 +202,10 @@ def test_run():
 
     # COMPLETE: Get Part Number from IQ API
     part_number = set_part_number(press_id)
+    part_number_padded = set_part_number(press_id, True)
     if DEBUG:
         print("Part Number: " + str(part_number))
+        print("Part Number (padded) " + part_number_padded)
 
     # Generate Serial Number
     serial_number = get_full_serial_number()
@@ -207,7 +213,7 @@ def test_run():
         print("Serial Number: " + serial_number)
 
     # Build label file
-    build_label(part_number, serial_number)
+    build_label(part_number, part_number_padded, serial_number)
 
     # Print label
     print_label(label_printer)
