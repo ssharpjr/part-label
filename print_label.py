@@ -69,20 +69,21 @@ def get_press_id():
 
 
 def set_printer():
-    label_printer_name = "zplprinter"
-    label_printer = check_output("lpstat -p | grep " + label_printer_name + "; exit 0",
+    label_printer = "zplprinter"
+    check_label_printer = check_output("lpstat -p | grep " + label_printer + "; exit 0",
                                  stderr=STDOUT, shell=True)
-    if not len(label_printer) > 0:
+    if not len(check_label_printer) > 0:
         print("Label printer not detected! \n Exiting")
         # Cannot print labels without a label printer.
         exit_program()
+    return label_printer
 
 
 def send_image_file_to_printer(label_printer):
     image_file = "cc/images/CC_120.GRF"
     print_cmd = "lpr -P " + label_printer + " -l " + image_file
-    # os.system(print_cmd)
-    print(print_cmd)
+    os.system(print_cmd)
+    # print(print_cmd)
 
 
 def set_part_number(press_id):
@@ -129,8 +130,8 @@ def main():
     press_id = get_press_id()
 
     # TODO: Set Printer (TOGGLE this on!)
-    # label_printer = set_printer()
-    label_printer = "zplprinter"
+    label_printer = set_printer()
+    # label_printer = "zplprinter"
 
     # COMPLETE: Send image file to printer just in case
     send_image_file_to_printer(label_printer)
