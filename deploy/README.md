@@ -175,9 +175,42 @@ touch /home/pi/part-label/log/serial_numbers.log
 
 ##### Setup ZLP Printer
 __TODO:__
-```shell
 
+Add user to lpadmin group
+```shell
+sudo usermod -a -G lpadmin pi
 ```
+
+Add local network access for CUPS admin
+```shell
+sudo nano /etc/cups/cupsd.conf
+```
+
+Comment out the following line
+```shell
+Listen localhost:631
+```
+and add this line
+```shell
+# Listen localhost:631
+Port 631
+```
+
+Add the following to the *server*, *admin pages*, and *configuration files* sections.
+```shell
+Allow @local
+```
+
+Restart CUPS server
+```shell
+sudo /etc/init.d/cups restart
+```
+
+In a browser, go to the address of the pi.  Use the local user's credentials.
+
+__*https://raspberryIP:631*__
+
+Add a local RAW Queue Printer using the connected Zebra ZPL printer.  __DO NOT USE the Zebra driver.__
 
 
 ##### Docker?
