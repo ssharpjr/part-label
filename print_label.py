@@ -81,8 +81,8 @@ def set_printer():
     # TODO: Set Printer Time?
     set_default_printer_cmd = "lpoptions -d " + label_printer
     set_cups_cmd = "lpadmin -p " + label_printer +\
-                   " -o usb-no-reattach-default=false > /dev/null"
-    restart_cups_cmd = "sudo /etc/init.d/cups restart > /dev/null"
+                   " -o usb-no-reattach-default=false > /dev/null 2>&1"
+    restart_cups_cmd = "sudo /etc/init.d/cups restart > /dev/null 2>&1"
     os.system(set_default_printer_cmd)
     os.system(set_cups_cmd)
     os.system(restart_cups_cmd)
