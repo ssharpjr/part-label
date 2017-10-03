@@ -79,7 +79,8 @@ def set_printer():
         exit_program()
     # Setup printer options
     # TODO: Set Printer Time?
-    set_default_printer_cmd = "lpoptions -d " + label_printer
+    set_default_printer_cmd = "lpoptions -d " + label_printer +\
+                              "> /dev/null 2>&1"
     set_cups_cmd = "lpadmin -p " + label_printer +\
                    " -o usb-no-reattach-default=false > /dev/null 2>&1"
     restart_cups_cmd = "sudo /etc/init.d/cups restart > /dev/null 2>&1"
