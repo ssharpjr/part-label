@@ -20,7 +20,6 @@ echo "Creating files..."
 echo
 echo $PRESS_ID_FILE
 echo ${PRESS_ID} | sudo tee ${PRESS_ID_FILE} > /dev/null
-echo
 
 echo $DATE_FILE
 echo "" > $DATE_FILE

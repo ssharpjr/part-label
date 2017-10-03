@@ -76,6 +76,14 @@ def set_printer():
         print("Label printer not detected! \n Exiting")
         # Cannot print labels without a label printer.
         exit_program()
+    # Setup printer options
+    # TODO: Set Printer Time?
+    set_default_printer_cmd = "lpoptions -d " + label_printer
+    set_cups_cmd = "lpadmin -p " + label_printer + " -o usb-no-reattach-default=false"
+    restart_cups_cmd = "sudo /etc/init.d/cups restart"
+    os.system(set_default_printer_cmd)
+    os.system(set_cups_cmd)
+    os.system(restart_cups_cmd)
     return label_printer
 
 
@@ -99,7 +107,7 @@ def set_part_number(press_id, pad=False):
 def build_label(pn, padpn, sn):
     with open(label_template_file_name, 'r') as f:
         label_data = f.read()
-    label = label_data.format(pn=pn, padpn=padpn, sn=sn)
+    label = label_data.format(pn=pn, padpn=padpn, sn=sn) + "\n"
 
     with open(label_file, 'w') as f:
         f.write(label)
