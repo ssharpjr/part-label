@@ -4,7 +4,7 @@
 
 ##### Enclosure
 * 8x8x6 hinged box with internal panel.
-* DIN Rail
+* 1 - 6in 7.5mm DIN Rail
 * 1 - PG9 Cable Gland
 * 1 - PG13.5 Cable Gland
 

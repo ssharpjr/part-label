@@ -12,7 +12,7 @@ api_url = 'http://10.130.0.42'  # Web API URL
 
 def wo_id_api_request(press_id):
     url = api_url + '/press/' + press_id
-    resp = requests.get(url=url, timeout=10)
+    resp = requests.get(url=url, timeout=20)
     data = json.loads(resp.text)
 
     try:
@@ -25,7 +25,7 @@ def wo_id_api_request(press_id):
 
 def press_api_request(press_id):
     url = api_url + '/press/' + press_id
-    resp = requests.get(url=url, timeout=10)
+    resp = requests.get(url=url, timeout=20)
     data = json.loads(resp.text)
 
     try:
@@ -42,26 +42,20 @@ def press_api_request(press_id):
 
 
 def press_api_request_pn_only(press_id):
-    url = api_url + '/press/' + press_id
-    resp = requests.get(url=url, timeout=10)
+    url = api_url + '/pressitemno/' + press_id
+    resp = requests.get(url=url, timeout=20)
     data = json.loads(resp.text)
 
     try:
-        press_id = data['press']
-        wo_id = data['wo_id']
         itemno = data['itemno']
-        descrip = data['descrip']
-        itemno_mat = data['itemno_mat']
-        descrip_mat = data['descrip_mat']
         return itemno
-    except:
-        print("\nAPI Data is incomplete")
-        print(data)
+    except ValueError as e:
+        print(e)
 
 
 def wo_api_request(wo_id):
     url = api_url + '/wo/' + wo_id
-    resp = requests.get(url=url, timeout=10)
+    resp = requests.get(url=url, timeout=20)
     data = json.loads(resp.text)
 
     try:
@@ -75,7 +69,7 @@ def wo_api_request(wo_id):
 
 def serial_api_request(sn):
     url = api_url + '/serial/' + sn
-    resp = requests.get(url=url, timeout=10)
+    resp = requests.get(url=url, timeout=20)
     data = json.loads(resp.text)
 
     try:

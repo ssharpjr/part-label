@@ -12,7 +12,7 @@ from subprocess import check_output, STDOUT
 
 import RPi.GPIO as io
 
-from iqapi_test import press_api_request_pn_only
+from iqapi import press_api_request_pn_only
 from serialnumber import get_full_serial_number, increment_sn, print_sn_file
 
 ###############################################################################
