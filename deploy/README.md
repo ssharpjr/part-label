@@ -211,7 +211,3 @@ In a browser, go to the address of the pi.  Use the local user's credentials.
 __*https://raspberryIP:631*__
 
 Add a local RAW Queue Printer using the connected Zebra ZPL printer.  __DO NOT USE the Zebra driver.__
-
-
-##### Docker?
-*Looking into this  :)*

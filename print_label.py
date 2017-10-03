@@ -13,7 +13,7 @@ from subprocess import check_output, STDOUT
 import RPi.GPIO as io
 
 from iqapi import press_api_request_pn_only
-from serialnumber import get_full_serial_number, increment_sn, print_sn_file
+from serialnumber import get_full_serial_number, increment_sn
 
 ###############################################################################
 
@@ -135,14 +135,13 @@ def print_label(label_printer):
 
 def main():
     # Startup checks and sets
-    # COMPLETE: Set Press ID
+    # Set Press ID
     press_id = get_press_id()
 
-    # TODO: Set Printer (TOGGLE this on!)
+    # Set Printer
     label_printer = set_printer()
-    # label_printer = "zplprinter"
 
-    # COMPLETE: Send image file to printer just in case
+    # Send image file to printer just in case
     send_image_file_to_printer(label_printer)
 
     while True:
@@ -176,7 +175,6 @@ def main():
             build_label(part_number, part_number_padded, serial_number)
 
             # Print label
-            # TODO: Need to test printing from RPI
             print_label(label_printer)
 
             # COMPLETE: Log printed Serial Number
@@ -196,42 +194,8 @@ def main():
 
 
 def test_run():
-    # Startup checks and sets
-    # COMPLETE: Set Press ID
-    press_id = get_press_id()
-
-    # COMPLETE: Set Printer
-    # label_printer = set_printer()
-    label_printer = "zplprinter"
-
-    # COMPLETE: Send image file to printer just in case
-    send_image_file_to_printer(label_printer)
-
-    # COMPLETE: Get Part Number from IQ API
-    part_number = set_part_number(press_id)
-    part_number_padded = set_part_number(press_id, True)
-    if DEBUG:
-        print("Part Number: " + str(part_number))
-        print("Part Number (padded) " + part_number_padded)
-
-    # Generate Serial Number
-    serial_number = get_full_serial_number()
-    if DEBUG:
-        print("Serial Number: " + serial_number)
-
-    # Build label file
-    build_label(part_number, part_number_padded, serial_number)
-
-    # Print label
-    print_label(label_printer)
-
-    # Log printed Serial Number
-    log_serial_number(part_number, serial_number)
-
-    # Increment Serial Number
-    increment_sn()
-
-    print_sn_file()
+    # Nothing to see here.  Move along. :)
+    pass
 
 
 if __name__ == '__main__':
