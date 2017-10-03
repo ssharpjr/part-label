@@ -70,8 +70,9 @@ def get_press_id():
 
 def set_printer():
     label_printer = "zplprinter"
-    check_label_printer = check_output("lpstat -p | grep " + label_printer + "; exit 0",
-                                 stderr=STDOUT, shell=True)
+    check_label_printer = check_output("lpstat -p | grep " + label_printer +
+                                       "; exit 0",
+                                       stderr=STDOUT, shell=True)
     if not len(check_label_printer) > 0:
         print("Label printer not detected! \n Exiting")
         # Cannot print labels without a label printer.
@@ -79,8 +80,9 @@ def set_printer():
     # Setup printer options
     # TODO: Set Printer Time?
     set_default_printer_cmd = "lpoptions -d " + label_printer
-    set_cups_cmd = "lpadmin -p " + label_printer + " -o usb-no-reattach-default=false"
-    restart_cups_cmd = "sudo /etc/init.d/cups restart"
+    set_cups_cmd = "lpadmin -p " + label_printer +\
+                   " -o usb-no-reattach-default=false > /dev/null"
+    restart_cups_cmd = "sudo /etc/init.d/cups restart > /dev/null"
     os.system(set_default_printer_cmd)
     os.system(set_cups_cmd)
     os.system(restart_cups_cmd)

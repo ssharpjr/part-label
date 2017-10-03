@@ -4,6 +4,6 @@
 APP="print_label.py"
 
 # Start virtual env
-source env/bin/activate
+. env/bin/activate
 
 python3 $APP
