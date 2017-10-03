@@ -29,7 +29,7 @@ sn_log_file = "log/serial_numbers.log"
 # SETUP Raspberry Pi
 
 # Assign GPIO pins
-btn_pin = 25  # PLC Input
+btn_pin = 26  # PLC Input
 
 # Setup GPIO
 io.setmode(io.BCM)
