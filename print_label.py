@@ -20,8 +20,9 @@ from serialnumber import get_full_serial_number, increment_sn, print_sn_file
 # VARIABLES
 DEBUG = 1
 
+press_id_file = "/boot/PRESS_ID"
 label_template_file_name = "label_template.zpl"
-label_file = "/tmp/label_file.zpl"
+label_file = "label_file.zpl"
 sn_log_file = "log/serial_numbers.log"
 
 ###############################################################################
@@ -51,7 +52,6 @@ def exit_program():
 def get_press_id():
     # Get PRESS_ID from /boot/PRESS_ID file
     # Close the program if no PRESS_ID is found
-    press_id_file = "/boot/PRESS_ID"
     try:
         with open(press_id_file) as f:
             PRESS_ID = f.read().replace('\n', '')
@@ -117,10 +117,6 @@ def log_serial_number(part_number, serial_number):
 def print_label(label_printer):
     print_cmd = "lpr -P " + label_printer + " -l " + label_file
     os.system(print_cmd)
-    if DEBUG:
-        print(print_cmd)
-    # cmd = "cat " + label_file
-    # os.system(cmd)
 
 
 ###############################################################################
@@ -140,9 +136,9 @@ def main():
 
     while True:
         try:
-            # TODO: Wait for PLC trigger (button)
-            # TODO: Need to test with RPI
+            # Wait for PLC trigger (button)
             # Wait for RISING edge (pin RISING from 0V to 3V3)
+            # PLC sends a 0.2 second signal
             if DEBUG:
                 print("Waiting on PLC trigger...")
             try:

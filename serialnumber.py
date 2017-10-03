@@ -23,8 +23,8 @@ from datetime import datetime
 # The serial number is incremented after each run.
 
 
-date_file = "/tmp/date_file.txt"
-sn_file = "/tmp/sn_file.txt"
+date_file = "date_file.txt"
+sn_file = "sn_file.txt"
 
 
 def get_day_of_year():
@@ -63,8 +63,8 @@ def read_date_file():
 
 
 def reset_sn():
-    # Reset the serial number counter to 0.
-    sn = 0
+    # Reset the serial number counter to 1.
+    sn = 1
     return sn
 
 

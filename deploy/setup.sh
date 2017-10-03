@@ -5,9 +5,9 @@ USER="pi"
 APP="part-label"
 APP_DIR="/home/${USER}/${APP}"
 
-PRESS_ID_FILE = "/boot/PRESS_ID"
-DATE_FILE="/tmp/date_file.txt"
-SN_FILE="/tmp/sn_file.txt"
+PRESS_ID_FILE="/boot/PRESS_ID"
+DATE_FILE="${APP_DIR}/date_file.txt"
+SN_FILE="${APP_DIR}sn_file.txt"
 LOG_FILE="${APP_DIR}/log/serial_numbers.log"
 
 echo
