@@ -174,11 +174,16 @@ touch /home/pi/part-label/log/serial_numbers.log
 
 
 ##### Setup ZLP Printer
-__TODO:__
+__TODO:_  
 
 Add user to lpadmin group
 ```shell
 sudo usermod -a -G lpadmin pi
+```
+
+Allow Remote Admin *(Option 1)*
+```shell
+sudo cupsctl --remote-admin
 ```
 
 Add local network access for CUPS admin
@@ -206,6 +211,20 @@ Restart CUPS server
 sudo /etc/init.d/cups restart
 ```
 
+__Setup Printer__ 
+Command Line *(Option 1)*  __UNTESTED!__
+Locate the USB printer.  Copy the 'usb://' output.
+```shell
+lpinfo -v | grep usb
+```
+
+Create the CUPS Raw Queue
+```shell
+lpadmin -p zplprinter -v usb://"Output from previous command" -m raw -E
+```
+
+
+Web Interface *(Option 2)*  
 In a browser, go to the address of the pi.  Use the local user's credentials.
 
 __*https://raspberryIP:631*__
