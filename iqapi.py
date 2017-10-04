@@ -12,7 +12,7 @@ api_url = 'http://10.130.0.42'  # Web API URL
 
 def wo_id_api_request(press_id):
     url = api_url + '/press/' + press_id
-    resp = requests.get(url=url, timeout=20)
+    resp = requests.get(url=url, timeout=30)
     data = json.loads(resp.text)
 
     try:
@@ -25,7 +25,7 @@ def wo_id_api_request(press_id):
 
 def press_api_request(press_id):
     url = api_url + '/press/' + press_id
-    resp = requests.get(url=url, timeout=20)
+    resp = requests.get(url=url, timeout=30)
     data = json.loads(resp.text)
 
     try:
@@ -43,19 +43,19 @@ def press_api_request(press_id):
 
 def press_api_request_pn_only(press_id):
     url = api_url + '/pressitemno/' + press_id
-    resp = requests.get(url=url, timeout=20)
-    data = json.loads(resp.text)
-
     try:
-        itemno = data['itemno']
-        return itemno
-    except ValueError as e:
-        print(e)
+        resp = requests.get(url=url, timeout=30)
+    except requests.exceptions.Timeout:
+        # Try again.
+        resp = requests.get(url=url, timeout=30)
+    data = json.loads(resp.text)
+    itemno = data['itemno']
+    return itemno
 
 
 def wo_api_request(wo_id):
     url = api_url + '/wo/' + wo_id
-    resp = requests.get(url=url, timeout=20)
+    resp = requests.get(url=url, timeout=30)
     data = json.loads(resp.text)
 
     try:
@@ -69,7 +69,7 @@ def wo_api_request(wo_id):
 
 def serial_api_request(sn):
     url = api_url + '/serial/' + sn
-    resp = requests.get(url=url, timeout=20)
+    resp = requests.get(url=url, timeout=30)
     data = json.loads(resp.text)
 
     try:

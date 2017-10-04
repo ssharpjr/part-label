@@ -8,16 +8,17 @@ import sys
 from datetime import datetime
 
 
-# Date file exists. If not, create it.
-# Serial number file exists. If not, create it.
+# Logic flow
+# Date file exists.
+# Serial number file exists.
 # Current date is captured and compared to the date file.
 # If the current date is greater than the date file,
 # - then a new day has started.
-# - The serial number file is reset to 0.
+# - The serial number file is reset to 1.
 # - The current date is saved to the date file.
 # The Serial number is assigned from the serial number file.
 # The current date was assigned when captured.
-#
+
 # For each run, the comparisons are made.
 # The date and serial number are used to generate the code.
 # The serial number is incremented after each run.
