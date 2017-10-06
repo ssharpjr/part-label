@@ -10,6 +10,7 @@ from datetime import datetime
 from time import sleep
 from subprocess import check_output, STDOUT
 
+import serial
 import RPi.GPIO as io
 
 from iqapi import press_api_request_pn_only
@@ -19,6 +20,8 @@ from serialnumber import get_full_serial_number, increment_sn
 
 # VARIABLES
 DEBUG = 1
+
+serial_port = '/dev/ttyUSB0'
 
 press_id_file = "/boot/PRESS_ID"
 label_template_file_name = "label_template.zpl"
@@ -74,6 +77,8 @@ def restart_program():
 def get_press_id():
     # Get PRESS_ID from /boot/PRESS_ID file
     # Close the program if no PRESS_ID is found
+    if DEBUG:
+        print("Setting Press ID...")
     try:
         with open(press_id_file) as f:
             PRESS_ID = f.read().replace('\n', '')
@@ -90,37 +95,65 @@ def get_press_id():
         sys.exit()
 
 
-def set_printer():
-    label_printer = "zplprinter"
-    check_label_printer = check_output("lpstat -p | grep " + label_printer +
-                                       "; exit 0",
-                                       stderr=STDOUT, shell=True)
-    if not len(check_label_printer) > 0:
-        print("Label printer not detected! \n Exiting")
-        # Cannot print labels without a label printer.
-        run_or_exit_program('exit')
-    # Setup printer options
-    # TODO: Set Printer Time?
-    set_default_printer_cmd = "lpoptions -d " + label_printer +\
-                              "> /dev/null 2>&1"
-    set_cups_cmd = "lpadmin -p " + label_printer +\
-                   " -o usb-no-reattach-default=false > /dev/null 2>&1"
-    restart_cups_cmd = "sudo /etc/init.d/cups restart > /dev/null 2>&1"
-    os.system(set_default_printer_cmd)
-    os.system(set_cups_cmd)
-    os.system(restart_cups_cmd)
+# def set_printer_usb():
+#     label_printer = "zplprinter"
+#     check_label_printer = check_output("lpstat -p | grep " + label_printer +
+#                                        "; exit 0",
+#                                        stderr=STDOUT, shell=True)
+#     if not len(check_label_printer) > 0:
+#         print("Label printer not detected! \n Exiting")
+#         # Cannot print labels without a label printer.
+#         run_or_exit_program('exit')
+#     # Setup printer options
+#     set_default_printer_cmd = "lpoptions -d " + label_printer +\
+#                               "> /dev/null 2>&1"
+#     set_cups_cmd = "lpadmin -p " + label_printer +\
+#                    " -o usb-no-reattach-default=false > /dev/null 2>&1"
+#     restart_cups_cmd = "sudo /etc/init.d/cups restart > /dev/null 2>&1"
+#     os.system(set_default_printer_cmd)
+#     os.system(set_cups_cmd)
+#     os.system(restart_cups_cmd)
+#     if DEBUG:
+#         print("Printer: " + label_printer)
+#     return label_printer
+
+
+def check_serial_port():
+    # Check if the serial port exists
     if DEBUG:
-        print("Printer: " + label_printer)
-    return label_printer
+        print("\nChecking serial port...")
+    serial_check = serial.Serial(serial_port, timeout=1)
+    try:
+        is_port = serial_check.read()
+        sleep(0.1)
+        serial_check.close()
+    except serial.SerialException as e:
+        print(e)
+        run_or_exit_program('exit')
 
 
-def send_image_file_to_printer(label_printer):
+def send_serial(file):
+    # Setup Serial Port
+    ser = serial.Serial(serial_port, baudrate=9600, bytesize=8, parity='N',
+                        stopbits=1, xonxoff=0, timeout=5)
+    if DEBUG:
+        print("(Sending " + file + ")")
+    with open(file) as f:
+        label = f.read()
+    try:
+        ser.write(label.encode())
+        ser.close()
+    except serial.SerialException as e:
+        if DEBUG:
+            print("Error: " + e)
+        run_or_exit_program('exit')
+
+
+def send_image_file_to_printer():
     if DEBUG:
         print("\nSending images to printer...")
     image_file = "cc/images/CC_120.GRF"
-    print_cmd = "lpr -P " + label_printer + " -l " + image_file
-    os.system(print_cmd)
-    # print(print_cmd)
+    send_serial(image_file)
 
 
 def check_for_files(f_list):
@@ -175,11 +208,17 @@ def log_serial_number(part_number, serial_number):
         f.write(log_entry)
 
 
-def print_label(label_printer):
+def print_label():
     if DEBUG:
         print("Printing label")
-    print_cmd = "lpr -P " + label_printer + " -l " + label_file
-    os.system(print_cmd)
+    send_serial(label_file)
+
+
+# def print_label_usb(label_printer):
+#     if DEBUG:
+#         print("Printing label")
+#     print_cmd = "lpr -P " + label_printer + " -l " + label_file
+#     os.system(print_cmd)
 
 
 def delete_label():
@@ -207,14 +246,17 @@ def main():
     if DEBUG:
         print("Press: " + press_id)
 
-    # Set Printer
-    label_printer = set_printer()
+    # Check Serial Port
+    check_serial_port()
+
+    # Set Printer (Only for USB)
+    # label_printer = set_printer()
 
     # Check for needed files
     check_for_files(file_list)
 
     # Send image file to printer just in case
-    send_image_file_to_printer(label_printer)
+    send_image_file_to_printer()
 
     if DEBUG:
         print()
@@ -254,7 +296,7 @@ def main():
             build_label(part_number, part_number_padded, serial_number)
 
             # Print label
-            print_label(label_printer)
+            print_label()
 
             # Log printed Serial Number
             log_serial_number(part_number, serial_number)

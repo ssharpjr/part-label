@@ -119,12 +119,13 @@ git clone https://github.com/ssharpjr/part-label.git
 ```shell
 cd part-label
 virtualenv env
-source env/bin/activate
+. env/bin/activate
 ```
 
 ##### Install pip software
 ```shell
 sudo pip3 install -r requirements.txt
+deactivate
 ```
 
 ##### Create Maintenance User Account
@@ -165,68 +166,3 @@ cd part-label
 python3 print_label.py
 ```
 
-##### Create place holder files
-```shell
-touch /tmp/date_file.txt
-touch /tmp/sn_file.txt
-touch /home/pi/part-label/log/serial_numbers.log
-```
-
-
-##### Setup ZLP Printer
-__TODO:_  
-
-Add user to lpadmin group
-```shell
-sudo usermod -a -G lpadmin pi
-```
-
-Allow Remote Admin *(Option 1)*
-```shell
-sudo cupsctl --remote-admin
-```
-
-Add local network access for CUPS admin
-```shell
-sudo nano /etc/cups/cupsd.conf
-```
-
-Comment out the following line
-```shell
-Listen localhost:631
-```
-and add this line
-```shell
-# Listen localhost:631
-Port 631
-```
-
-Add the following to the *server*, *admin pages*, and *configuration files* sections.
-```shell
-Allow @local
-```
-
-Restart CUPS server
-```shell
-sudo /etc/init.d/cups restart
-```
-
-__Setup Printer__ 
-Command Line *(Option 1)*  __UNTESTED!__
-Locate the USB printer.  Copy the 'usb://' output.
-```shell
-lpinfo -v | grep usb
-```
-
-Create the CUPS Raw Queue
-```shell
-lpadmin -p zplprinter -v usb://"Output from previous command" -m raw -E
-```
-
-
-Web Interface *(Option 2)*  
-In a browser, go to the address of the pi.  Use the local user's credentials.
-
-__*https://raspberryIP:631*__
-
-Add a local RAW Queue Printer using the connected Zebra ZPL printer.  __DO NOT USE the Zebra driver.__
