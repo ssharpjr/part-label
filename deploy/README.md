@@ -3,7 +3,7 @@
 
 ## Raspberry Pi Initial Configuration
 ##### Raspi-Config *(Option 1)*
-Using a Raspberry Pi3 running Raspian.
+Using a Raspberry Pi3 running Raspian (Stretch or Stretch Lite).
 ```shell
 sudo raspi-config
 ```
@@ -22,7 +22,8 @@ Perform the following steps:
 5. Reboot
 
 
-##### Console Only *(Option 2)*
+___
+##### Console Only *(Option 2  NOT CURRENTLY WORKING ON STRETCH!)*
 __Set Locale to US__
 ```shell
 sudo locale-gen en_US.UTF-8
@@ -31,12 +32,12 @@ sudo update-locale
 
 __Set Keyboard Map__
 ```shell
-sudo echo XKBMODEL="pc104" > /etc/default/keyboard
-sudo echo XKBLAYOUT="us" > /etc/default/keyboard
+echo XKBMODEL="pc104" > sudo tee /etc/default/keyboard
+echo XKBLAYOUT="us" > sudo tee /etc/default/keyboard
 ```
 __Set Time Zone__
 ```shell
-sudo echo US\Eastern > /etc/timezone
+echo US\Eastern > sudo tee /etc/timezone
 ```
 
 __Change Pi User Password__
@@ -61,7 +62,7 @@ __Set AutoLogin__
 sudo sed -i 's/ExecStart=-\/sbin\/agetty --noclear \%I \$TERM/ExecStart=-/sbin/agetty --autologin pi --noclear %I $TERM/g' \
 /etc/systemd/system/autologin@.service
 ```
-
+___
 
 
 ##### Setup Wireless Networking
@@ -85,6 +86,7 @@ Reboot
 ```shell
 sudo apt-get remove --purge wolfram-engine libreoffice* scratch minecraft-pi sonic-pi dillo gpicview \
 oracle-java8-jdk openjdk-7-jre oracle-java7-jdk openjdk-8-jre vim-tiny -y
+sudo apt-get update
 sudo apt-get upgrade -y
 sudo apt-get dist-upgrade -y
 sudo apt-get autoremove -y
@@ -97,7 +99,7 @@ sync
 ```shell
 sudo apt-get update
 sudo apt-get install -y vim build-essential python3-dev python3-smbus \
-python3-pip git rpi-update python3-rpi.gpio i2c-tools virtualenv cups
+python3-pip git rpi-update python3-rpi.gpio i2c-tools virtualenv
 ```
 
 ##### Setup VIM
@@ -118,21 +120,20 @@ git clone https://github.com/ssharpjr/part-label.git
 ##### Create Virtual Environment
 ```shell
 cd part-label
-virtualenv env
+virtualenv -p python3 env
 . env/bin/activate
 ```
 
 ##### Install pip software
 ```shell
-sudo pip3 install -r requirements.txt
+pip3 install -r requirements.txt
 deactivate
 ```
 
 ##### Create Maintenance User Account
 ```shell
 sudo adduser USERNAME
-sudo usermod -G adm,dialout,cdrom,sudo,audio,video,plugdev,games,users,input,\
-     netdev,spi,i2c,gpio -a USERNAME
+sudo usermod -G adm,dialout,cdrom,sudo,audio,video,plugdev,games,users,input,netdev,spi,i2c,gpio -a USERNAME
 ```
 
 ##### Setup Autologin
@@ -161,8 +162,15 @@ vi /home/pi/.bashrc
 
 Enter the following at the end of the file:
 ```shell
-# Run Part Labeler
+# Keep the screen on (if needed)
+sudo setterm -blank 0
+
+# Run App
 cd part-label
-python3 print_label.py
+python3 main.py
 ```
 
+###### Notes
+front bumper 109  
+brow fascia 176  
+gas bucket 129  
