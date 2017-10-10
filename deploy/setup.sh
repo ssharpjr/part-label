@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # setup.sh - Sets up necessary files and directories.
 
-USER="pi"
+USER="runner"
 APP="part-label"
 APP_DIR="/home/${USER}/${APP}"
 

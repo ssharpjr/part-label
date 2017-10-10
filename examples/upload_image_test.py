@@ -6,9 +6,13 @@
 import serial
 
 
+files = ['IMAGE1.GRF',
+         'IMAGE2.GRF',
+         'IMAGE3.GRF',
+         'IMAGE4.GRF',
+         'IMAGE5.GRF',
+         'IMAGE6.GRF']
 
-# files = ['setup.zpl', 'data1.zpl', 'data2.zpl']
-files = ['delete_image.zpl']
 
 for file in files:
     ser = serial.Serial('/dev/ttyUSB0', baudrate=9600, bytesize=8, parity='N',

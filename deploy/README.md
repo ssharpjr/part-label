@@ -18,7 +18,7 @@ Perform the following steps:
 4. Advanced Options
   a. Set Hostname
   b. Enable SSH
-  c. Enable I2C
+  c. ~~Enable I2C~~
 5. Reboot
 
 
@@ -33,7 +33,7 @@ sudo update-locale
 __Set Keyboard Map__
 ```shell
 echo XKBMODEL="pc104" > sudo tee /etc/default/keyboard
-echo XKBLAYOUT="us" > sudo tee /etc/default/keyboard
+echo XKBLAYOUT="us" > sudo tee --append /etc/default/keyboard
 ```
 __Set Time Zone__
 ```shell
@@ -57,7 +57,7 @@ HOSTNAME=$NEWHOSTNAME
 sudo /etc/init.d/hostname.sh
 ```
 
-__Set AutoLogin__
+__Set AutoLogin__ *(SKIP)*
 ```shell
 sudo sed -i 's/ExecStart=-\/sbin\/agetty --noclear \%I \$TERM/ExecStart=-/sbin/agetty --autologin pi --noclear %I $TERM/g' \
 /etc/systemd/system/autologin@.service
@@ -81,6 +81,32 @@ psk="SUPERSECRETKEY"
 Reboot
 
 
+##### Create Runner User Account
+```shell
+sudo adduser runner
+sudo usermod -G adm,dialout,cdrom,sudo,audio,video,plugdev,games,users,input,netdev,spi,i2c,gpio -a runner
+```
+
+##### Create Maintenance User Account (your name)
+```shell
+sudo adduser YOURNAME
+sudo usermod -G adm,dialout,cdrom,sudo,audio,video,plugdev,games,users,input,netdev,spi,i2c,gpio -a YOURNAME
+```
+
+##### Set Sudo Rights
+Grant the runner user the ability to run sudo without a password.
+```shell
+echo "runner ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/010_runner-nopasswd
+sudo chmod u-w /etc/sudoers.d/010_runner-nopasswd
+```
+
+##### Use New User to Disable Pi User
+Reboot and login with the *runner* account.
+```shell
+sudo usermod -L pi
+```
+
+
 ## Software Removal
 ##### Uninstall unnecessary packages and update all packages
 ```shell
@@ -99,7 +125,7 @@ sync
 ```shell
 sudo apt-get update
 sudo apt-get install -y vim build-essential python3-dev python3-smbus \
-python3-pip git rpi-update python3-rpi.gpio i2c-tools virtualenv
+python3-pip git python3-rpi.gpio i2c-tools virtualenv
 ```
 
 ##### Setup VIM
@@ -117,24 +143,15 @@ Clone the Part-Label Repo
 git clone https://github.com/ssharpjr/part-label.git
 ```
 
-##### Create Virtual Environment
+##### Create Virtual Environment and Install Pip Software
 ```shell
 cd part-label
 virtualenv -p python3 env
 . env/bin/activate
-```
-
-##### Install pip software
-```shell
 pip3 install -r requirements.txt
 deactivate
 ```
 
-##### Create Maintenance User Account
-```shell
-sudo adduser USERNAME
-sudo usermod -G adm,dialout,cdrom,sudo,audio,video,plugdev,games,users,input,netdev,spi,i2c,gpio -a USERNAME
-```
 
 ##### Setup Autologin
 Create a systemd startup file
@@ -146,7 +163,7 @@ Enter the following:
 ```shell
 [Service]
 ExecStart=
-ExecStart=-/sbin/agetty --autologin pi --noclear %I 38400 linux
+ExecStart=-/sbin/agetty --autologin runner --noclear %I 38400 linux
 ```
 
 Start the service
@@ -170,7 +187,10 @@ cd part-label
 python3 main.py
 ```
 
-###### Notes
+
+
+
+###### Other Notes
 front bumper 109  
 brow fascia 176  
 gas bucket 129  

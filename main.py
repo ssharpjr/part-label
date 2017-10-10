@@ -8,7 +8,6 @@ import os
 import sys
 from datetime import datetime
 from time import sleep
-from subprocess import check_output, STDOUT
 
 import serial
 import RPi.GPIO as io
@@ -85,7 +84,8 @@ def get_press_id():
             if len(PRESS_ID) >= 3:
                 return PRESS_ID
             else:
-                raise ValueError("PRESS_ID is Not Assigned!\nExiting")
+                raise ValueError("PRESS_ID is Not Assigned!"
+                                 "Run 'sh deploy/setup.sh'\nExiting")
                 sys.exit()
     except IOError:
         print(press_id_file + " Not Found!\nExiting")

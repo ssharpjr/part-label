@@ -6,6 +6,7 @@
 ^MD2   ^FX Set Media Darkness, +2
 ^MNW   ^FX Set Media Tracking, web sensing
 ^MTT   ^FX Set Media Type, thermal transfer
+^MMP   ^FX Peel-off Attachment Present
 ^PR4,4 ^FX Set Print Rate, 4 ips
 ^CI31  ^FX Set Character Encoding, ZCP 1250
 ^PW304 ^FX Set Print Width, 304 (1.5 in)
