@@ -1,0 +1,1 @@
+Individual projects/deployments are in the deployments folder.

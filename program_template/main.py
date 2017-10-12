@@ -9,11 +9,12 @@ import sys
 from datetime import datetime
 from time import sleep
 
-import serial
 import RPi.GPIO as io
-
+import serial
 from iqapi import press_api_request_pn_only
-from serialnumber import get_full_serial_number, increment_sn
+
+from program_template.serialnumber import get_full_serial_number, increment_sn, \
+    date_file, sn_file
 
 ###############################################################################
 
@@ -27,9 +28,7 @@ label_template_file_name = "label_template.zpl"
 label_file = "label_file.zpl"  # Generated on the fly.
 sn_log_file = "log/serial_numbers.log"
 
-# From serialnumber.py
-date_file = "date_file.txt"
-sn_file = "sn_file.txt"
+# From serialnumber.py (date_file, sn_file)
 
 # List of files required to be present at the start
 file_list = [date_file, sn_file, sn_log_file]
@@ -39,6 +38,8 @@ file_list = [date_file, sn_file, sn_log_file]
 
 # Assign GPIO pins
 btn_pin = 25  # PLC Input
+switch_pin_1 = 24
+switch_pin_2 = 23
 
 # Setup GPIO
 io.setmode(io.BCM)
@@ -85,7 +86,7 @@ def get_press_id():
                 return PRESS_ID
             else:
                 raise ValueError("PRESS_ID is Not Assigned!"
-                                 "Run 'sh deploy/setup.sh'\nExiting")
+                                 "Run 'sh deployments/setup.sh'\nExiting")
                 sys.exit()
     except IOError:
         print(press_id_file + " Not Found!\nExiting")
